@@ -1,122 +1,142 @@
-// ============================================================
-// ESTATE HUB — LOGIN PAGE
-// src/pages/Auth/LoginPage.tsx
-// ============================================================
-
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { motion } from 'framer-motion'
-import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { motion, easeOut } from 'framer-motion'
+import { Eye, EyeOff, Loader2, LogIn, AlertCircle } from 'lucide-react'
+import { useAppDispatch } from '@/store/hooks'
 import { setCredentials } from '@/store/slices/authSlice'
 import authService from '@/services/authService'
+import toast from 'react-hot-toast'
 
 const schema = z.object({
-  email:    z.string().email('Enter a valid email'),
+  email:    z.string().email('Enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
 })
 type FormData = z.infer<typeof schema>
 
-export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const dispatch  = useDispatch()
-  const navigate  = useNavigate()
-  const location  = useLocation()
-  const from      = (location.state as any)?.from?.pathname || '/dashboard'
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }
+const item    = { hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: easeOut } } }
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
-  })
+const fieldLabel      = "block text-xs font-semibold text-gray-700 mb-1.5"
+const fieldInput      = "w-full px-3 py-2.5 rounded-lg border border-stone-200 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-500 transition-all"
+const fieldInputError = "w-full px-3 py-2.5 rounded-lg border border-red-300 bg-red-50 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-all"
+const fieldError      = "flex items-center gap-1 text-xs text-red-500 mt-1"
+ 
+export default function LoginPage() {
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from     = (location.state as { from?: string })?.from || '/feed'
+  const [showPass, setShowPass] = useState(false)
+  const [apiError, setApiError] = useState('')
+
+  const { register, handleSubmit, formState: { errors, isSubmitting } } =
+    useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
-    setLoading(true)
+    setApiError('')
     try {
-      const res = await authService.login(data)
-      const { access, refresh, user } = res.data.data
-      dispatch(setCredentials({ user, access, refresh }))
-      toast.success(`Welcome back, ${user.first_name}!`)
+      const result = await authService.login(data)
+      dispatch(setCredentials({ user: result.user, tokens: result.tokens }))
+      toast.success(`Welcome back, ${result.user.first_name}!`)
       navigate(from, { replace: true })
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Invalid credentials. Please try again.'
-      toast.error(msg)
-    } finally {
-      setLoading(false)
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { detail?: string; message?: string } } }
+      setApiError(e?.response?.data?.detail || e?.response?.data?.message || 'Invalid email or password.')
     }
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl"
-    >
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-        <p className="text-slate-400 mt-1 text-sm">Sign in to your EstateHub account</p>
+    <motion.div variants={stagger} initial="hidden" animate="visible" className="w-full">
+      <div className="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden">
+        {/* Accent strip */}
+        <div className="h-1.5 bg-gradient-to-r from-purple-700 via-amber-400 to-purple-700" />
+        <div className="px-8 py-8">
+
+          {/* Header */}
+          <motion.div variants={item} className="mb-7">
+            <h1 className="text-3xl font-bold text-gray-900 mb-1.5">Welcome back</h1>
+            <p className="text-sm text-gray-500">Sign in to your Estate Hub account</p>
+          </motion.div>
+
+          {/* API Error */}
+          {apiError && (
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+              className="mb-5 flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+              <AlertCircle size={15} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-600">{apiError}</p>
+            </motion.div>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            {/* Email */}
+            <motion.div variants={item}>
+              <label className={fieldLabel}>Email address</label>
+              <input type="email" autoComplete="email" placeholder="you@example.com"
+                {...register('email')}
+                className={errors.email ? fieldInputError : fieldInput} />
+              {errors.email && <p className={fieldError}><AlertCircle size={11} />{errors.email.message}</p>}
+            </motion.div>
+
+            {/* Password */}
+            <motion.div variants={item}>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold text-gray-700">Password</label>
+                <Link to="/forgot-password" className="text-xs font-semibold text-purple-700 hover:text-purple-900 transition-colors">
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input type={showPass ? 'text' : 'password'} autoComplete="current-password"
+                  placeholder="Your password" {...register('password')}
+                  className={`pr-11 ${errors.password ? fieldInputError : fieldInput}`} />
+                <button type="button" onClick={() => setShowPass(!showPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {errors.password && <p className={fieldError}><AlertCircle size={11} />{errors.password.message}</p>}
+            </motion.div>
+
+            {/* Submit */}
+            <motion.div variants={item} className="mt-1">
+              <motion.button type="submit" disabled={isSubmitting}
+                whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
+                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl
+                           bg-purple-700 text-white font-bold hover:bg-purple-800 transition-all
+                           shadow-md disabled:opacity-60">
+                {isSubmitting
+                  ? <><Loader2 size={17} className="animate-spin" /> Signing in…</>
+                  : <><LogIn size={17} /> Sign In</>}
+              </motion.button>
+            </motion.div>
+          </form>
+
+          {/* Divider */}
+          <motion.div variants={item} className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-stone-200" />
+            <span className="text-xs text-gray-400 font-semibold">NEW HERE?</span>
+            <div className="flex-1 h-px bg-stone-200" />
+          </motion.div>
+
+          {/* Register link */}
+          <motion.div variants={item}>
+            <Link to="/register"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg
+                         border-2 border-stone-200 text-sm font-semibold text-gray-700
+                         hover:border-purple-500 hover:text-purple-700 transition-all duration-200">
+              Create a free account
+            </Link>
+          </motion.div>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1.5">Email address</label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              {...register('email')}
-              type="email"
-              placeholder="you@example.com"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
-            />
-          </div>
-          {errors.email && <p className="mt-1.5 text-xs text-red-400">{errors.email.message}</p>}
-        </div>
-
-        {/* Password */}
-        <div>
-          <div className="flex justify-between items-center mb-1.5">
-            <label className="block text-sm font-medium text-slate-300">Password</label>
-            <Link to="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300 transition">
-              Forgot password?
-            </Link>
-          </div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              {...register('password')}
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              className="w-full pl-10 pr-10 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
-            />
-            <button type="button" onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-          {errors.password && <p className="mt-1.5 text-xs text-red-400">{errors.password.message}</p>}
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-        >
-          {loading ? <><Loader2 size={16} className="animate-spin" /> Signing in...</> : 'Sign In'}
-        </button>
-      </form>
-
-      <p className="mt-6 text-center text-sm text-slate-400">
-        Don't have an account?{' '}
-        <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition">
-          Create one free
-        </Link>
-      </p>
+      <motion.p variants={item} className="text-center text-xs text-gray-400 mt-4">
+         Secured with 256-bit encryption · Kenya's most trusted property platform
+      </motion.p>
     </motion.div>
   )
 }

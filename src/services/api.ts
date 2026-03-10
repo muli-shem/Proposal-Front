@@ -40,9 +40,15 @@ const processQueue = (error: unknown, token: string | null = null) => {
   })
   failedQueue = []
 }
-
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    //Unwrap the {sucess , messg, data} envelope automatically
+  if (response.data?.success !==undefined){
+    response.data = response.data.data
+  }
+  return response
+  },
+
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 

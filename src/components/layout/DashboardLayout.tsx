@@ -1,9 +1,3 @@
-// ============================================================
-// ESTATE HUB — DASHBOARD LAYOUT
-// frontend/src/layouts/DashboardLayout.tsx
-// Sidebar + content area for authenticated users
-// ============================================================
-
 import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,23 +10,23 @@ import { logout } from '../../store/slices/authSlice'
 import authService from '../../services/authService'
 
 const navItems = [
-  { to: '/dashboard',           icon: LayoutDashboard, label: 'Overview'  },
-  { to: '/dashboard/listings',  icon: Building2,       label: 'Listings'  },
-  { to: '/dashboard/bookings',  icon: Calendar,        label: 'Bookings'  },
-  { to: '/dashboard/messages',  icon: MessageSquare,   label: 'Messages'  },
-  { to: '/dashboard/settings',  icon: Settings,        label: 'Settings'  },
+  { to: '/dashboard',          icon: LayoutDashboard, label: 'Overview'  },
+  { to: '/dashboard/listings', icon: Building2,       label: 'Listings'  },
+  { to: '/dashboard/bookings', icon: Calendar,        label: 'Bookings'  },
+  { to: '/dashboard/messages', icon: MessageSquare,   label: 'Messages'  },
+  { to: '/dashboard/settings', icon: Settings,        label: 'Settings'  },
 ]
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const dispatch   = useDispatch()
-  const navigate   = useNavigate()
-  const { user, refreshToken } = useSelector((s: RootState) => s.auth)
+  const dispatch  = useDispatch()
+  const navigate  = useNavigate()
+  const { user } = useSelector((s: RootState) => s.auth)
   const unread = useSelector((s: RootState) => s.notification.unreadCount)
 
   const handleLogout = async () => {
     try {
-      if (refreshToken) await authService.logout(refreshToken)
+      await authService.logout()
     } finally {
       dispatch(logout())
       navigate('/login')
@@ -40,27 +34,26 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex bg-stone-50">
 
-      {/* ── Sidebar ──────────────────────────────────────── */}
+      {/* ── Sidebar ── */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white
-        flex flex-col transition-transform duration-300
+        fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white flex flex-col
+        transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:inset-auto
       `}>
         {/* Logo */}
         <div className="flex items-center justify-between p-5 border-b border-slate-700">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-sm">EH</span>
+            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
+                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H15V15H9V21H4C3.44772 21 3 20.5523 3 20V9.5Z" fill="currentColor"/>
+              </svg>
             </div>
-            <span className="font-semibold text-lg">EstateHub</span>
+            <span className="font-semibold text-lg">Estate Hub</span>
           </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white"
-          >
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
             <X size={20} />
           </button>
         </div>
@@ -71,12 +64,12 @@ export default function DashboardLayout() {
             {user?.avatar_url ? (
               <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-semibold">
+              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center font-semibold text-white">
                 {user?.first_name?.[0]}
               </div>
             )}
             <div className="min-w-0">
-              <p className="font-medium text-sm truncate">{user?.full_name}</p>
+              <p className="font-medium text-sm truncate text-white">{user?.full_name}</p>
               <p className="text-slate-400 text-xs capitalize">{user?.role?.replace('_', ' ')}</p>
             </div>
           </div>
@@ -91,10 +84,10 @@ export default function DashboardLayout() {
               end={to === '/dashboard'}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-purple-600 text-white'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`
               }
             >
@@ -108,7 +101,8 @@ export default function DashboardLayout() {
         <div className="p-4 border-t border-slate-700">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm font-medium text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm font-medium
+                       text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition-colors"
           >
             <LogOut size={18} />
             Logout
@@ -124,20 +118,19 @@ export default function DashboardLayout() {
         />
       )}
 
-      {/* ── Main Content ─────────────────────────────────── */}
+      {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100"
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-stone-100"
           >
             <Menu size={20} />
           </button>
 
           <div className="flex items-center gap-3 ml-auto">
-            {/* Notifications bell */}
-            <button className="relative p-2 rounded-lg text-slate-600 hover:bg-slate-100">
+            <button className="relative p-2 rounded-lg text-gray-600 hover:bg-stone-100">
               <Bell size={20} />
               {unread > 0 && (
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
@@ -151,7 +144,6 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
-
     </div>
   )
 }
