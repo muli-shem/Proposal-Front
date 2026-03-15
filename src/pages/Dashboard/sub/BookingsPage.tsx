@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Calendar, Building2, MapPin, Clock, CheckCircle2,
-  XCircle, AlertCircle, ChevronDown, Loader2, Star,
+  XCircle, AlertCircle, Loader2, Star,
 } from 'lucide-react'
 import api from '@/services/api'
 import { useAppSelector } from '@/store/hooks'

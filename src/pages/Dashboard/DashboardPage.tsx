@@ -10,8 +10,8 @@ import {
   Building2, Heart, Bookmark, Calendar, MessageSquare,
   Bell, ShieldCheck, TrendingUp, Users, Eye, Zap,
   CheckCircle2, Clock, XCircle, AlertCircle, ChevronRight,
-  ArrowUpRight, ArrowDownRight, Loader2, Star, MapPin,
-  CreditCard, FileText, Settings, LogOut, User, ExternalLink,
+  ArrowUpRight, ArrowDownRight, Star, MapPin,
+  CreditCard, Settings, LogOut, User, ExternalLink,
 } from 'lucide-react'
 import PropertyCard from '@/components/property/PropertyCard'
 import api from '@/services/api'
@@ -19,7 +19,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { logout } from '@/store/slices/authSlice'
 import { clearStoredTokens } from '@/services/api'
 import {
-  formatCurrency, formatCurrencyFull, formatCount,
+  formatCurrency, formatCount,
   formatDate, timeAgo, getInitials,
 } from '@/utils/format'
 import type { Property, Booking, PaymentTransaction, AgencyAnalytics } from '@/types'

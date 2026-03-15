@@ -9,15 +9,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   CheckCircle2, MapPin, Phone, Globe, Mail, Star,
   UserPlus, Users, Building2, Play, Heart, MessageSquare,
-  ArrowLeft, Loader2, Send, ChevronRight, Award,
-  Bookmark, ExternalLink, TrendingUp, Calendar,
+  ArrowLeft, Loader2, Send, ChevronRight, Award, ExternalLink, TrendingUp, Calendar,
 } from 'lucide-react'
 import PropertyCard, { PropertyCardSkeleton } from '@/components/property/PropertyCard'
 import api from '@/services/api'
 import { useAppSelector } from '@/store/hooks'
 import {
   getInitials, formatCount, formatCurrency,
-  formatDate, timeAgo,
+  formatDate
 } from '@/utils/format'
 import type { Agency, AgentBasic, Property, Reel } from '@/types'
 import toast from 'react-hot-toast'

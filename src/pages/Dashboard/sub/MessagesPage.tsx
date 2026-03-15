@@ -6,8 +6,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  MessageSquare, Send, Search, CheckCircle2, Loader2,
-  ArrowLeft, MoreVertical, Building2, X,
+  MessageSquare, Send, Search, Loader2,
+  ArrowLeft, Building2, X,
 } from 'lucide-react'
 import api from '@/services/api'
 import { useAppSelector } from '@/store/hooks'
@@ -49,7 +49,7 @@ export default function MessagesPage() {
   const [sending,       setSending]       = useState(false)
   const [search,        setSearch]        = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const wsRef          = useRef<WebSocket | null>(null)
+
 
   useEffect(() => {
     const load = async () => {

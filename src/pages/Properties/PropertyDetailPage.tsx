@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Heart, Bookmark, Share2, MapPin, Bed, Bath, Maximize2,
   CheckCircle2, Building2, ChevronLeft, ChevronRight,
-  MessageSquare, Phone, Globe, Star, Send, X, Calendar,
+  MessageSquare, Phone, Globe, Send, X, Calendar,
   ArrowLeft, Eye, Users, Zap, ShieldCheck, ExternalLink,
   Loader2, ChevronDown, Copy, Check,
 } from 'lucide-react'
@@ -18,7 +18,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { toggleLiked, toggleSaved } from '@/store/slices/propertySlice'
 import {
   formatCurrencyFull, formatCurrency, formatListingType,
-  timeAgo, formatDate, getInitials, formatCount,
+  timeAgo, getInitials, formatCount,
 } from '@/utils/format'
 import type { Property, Comment } from '@/types'
 import toast from 'react-hot-toast'

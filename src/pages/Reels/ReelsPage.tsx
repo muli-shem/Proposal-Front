@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Heart, MessageSquare, Bookmark, Share2, Volume2, VolumeX,
-  Play, Pause, CheckCircle2, MapPin, ArrowLeft, ChevronUp,
+  Play, CheckCircle2, MapPin, ArrowLeft, ChevronUp,
   ChevronDown, X, Send, Loader2, ExternalLink,
 } from 'lucide-react'
 import api from '@/services/api'
@@ -21,14 +21,14 @@ import toast from 'react-hot-toast'
 const MOCK_REELS: Reel[] = Array.from({ length: 8 }, (_, i) => ({
   id: i + 1,
   title: [
-    'Karen Villa with Pool 🏊 — KES 68.5M',
-    'Modern Penthouse, Upperhill ✨',
-    'Beachfront Cottage, Diani 🌊',
-    '3BR Townhouse, Lavington 🌿',
-    'Westlands Office Space 🏢',
-    'Muthaiga Mansion Tour 👑',
+    'Karen Villa with Pool  — KES 68.5M',
+    'Modern Penthouse, Upperhill ',
+    'Beachfront Cottage, Diani ',
+    '3BR Townhouse, Lavington ',
+    'Westlands Office Space ',
+    'Muthaiga Mansion Tour ',
     'Kilimani Apartment — Ready to Move In',
-    'Ngong Hills Eco Retreat 🌄',
+    'Ngong Hills Eco Retreat ',
   ][i],
   description: [
     'Luxury living at its finest. 4 beds, heated pool, double garage on half an acre in Karen.',
@@ -182,7 +182,7 @@ function ReelSlide({
   isFirst: boolean
   isLast: boolean
 }) {
-  const navigate = useNavigate()
+  
   const { isAuthenticated } = useAppSelector((s) => s.auth)
   const videoRef = useRef<HTMLVideoElement>(null)
 

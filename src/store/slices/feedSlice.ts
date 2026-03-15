@@ -4,7 +4,7 @@
 // ============================================================
 
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Property } from './propertySlice'
+import type { Property } from '@/types/index'
 
 interface FeedState {
   items:      Property[]

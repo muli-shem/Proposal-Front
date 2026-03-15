@@ -5,9 +5,6 @@
 // ============================================================
 
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import type { RootState } from './store/store'
-
 // Layouts
 import MainLayout from './components/layout/MainLayout'
 import AuthLayout from './components/layout/AuthLayout'

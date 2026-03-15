@@ -6,10 +6,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Bell, Shield, Smartphone, Globe, Trash2, LogOut,
-  ChevronRight, Check, Loader2, AlertTriangle, X,
-} from 'lucide-react'
+import { Trash2, LogOut , ChevronRight, Check, Loader2, AlertTriangle, X, } from 'lucide-react'
 import api from '@/services/api'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { logout } from '@/store/slices/authSlice'
@@ -113,7 +110,7 @@ function DeleteModal({ onClose, onConfirm }: { onClose: () => void; onConfirm: (
 export default function SettingsPage() {
   const dispatch   = useAppDispatch()
   const navigate   = useNavigate()
-  const { user }   = useAppSelector((s) => s.auth)
+  useAppSelector((s) => s.auth)
 
   // Notification preferences
   const [notifs, setNotifs] = useState({

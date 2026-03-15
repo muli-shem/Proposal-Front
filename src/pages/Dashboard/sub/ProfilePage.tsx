@@ -4,7 +4,6 @@
 // ============================================================
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Camera, User, Phone, Mail, Lock, Eye, EyeOff, Save, Loader2, CheckCircle2 } from 'lucide-react'
 import api from '@/services/api'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
