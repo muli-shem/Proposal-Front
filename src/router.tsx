@@ -52,6 +52,15 @@ const MessagesPage       = lazy(() => import('@/pages/Dashboard/sub/MessagesPage
 const NotificationsPage  = lazy(() => import('@/pages/Dashboard/sub/NotificationsPage'))
 const VerificationPage   = lazy(() => import('@/pages/Dashboard/sub/VerificationPage'))
 const SettingsPage       = lazy(() => import('@/pages/Dashboard/sub/SettingsPage'))
+const AdminLayout        = lazy(() => import('@/components/admin/AdminLayout'))
+const AdminOverviewPage  = lazy(() => import('@/pages/Admin/AdminOverviewpage'))
+const AdminAnalyticsPage = lazy(() => import('@/pages/Admin/AdminAnalyticsPage'))
+const AdminPropertiesPage= lazy(() => import('@/pages/Admin/AdminPropertiesPage'))
+const AdminBookingsPage  = lazy(() => import('@/pages/Admin/AdminBookingsPage'))
+const AdminPaymentsPage  = lazy(() => import('@/pages/Admin/AdminPaymentsPage'))
+const AdminTeamPage      = lazy(() => import('@/pages/Admin/AdminTeamPage'))
+const AdminAgencyPage    = lazy(() => import('@/pages/Admin/AdminAgencyPage'))
+const AdminSettingsPage  = lazy(() => import('@/pages/Admin/AdminSettingsPage'))
 
 // ── Protected route wrapper ───────────────────────────────────
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -117,7 +126,28 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
+// ── Admin panel (/admin/*) — agency_admin only ──────────────
+  {
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-canvas"><div className="w-10 h-10 rounded-full border-2 border-terra border-t-transparent animate-spin"/></div>}>
+          <AdminLayout />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: '/admin',            element: S(AdminOverviewPage)   },
+      { path: '/admin/analytics',  element: S(AdminAnalyticsPage)  },
+      { path: '/admin/properties', element: S(AdminPropertiesPage) },
+      { path: '/admin/bookings',   element: S(AdminBookingsPage)   },
+      { path: '/admin/payments',   element: S(AdminPaymentsPage)   },
+      { path: '/admin/team',       element: S(AdminTeamPage)       },
+      { path: '/admin/agency',     element: S(AdminAgencyPage)     },
+      { path: '/admin/settings',   element: S(AdminSettingsPage)   },
+      { path: '/admin/*',          element: <Navigate to="/admin" replace /> },
+    ],
+  },
+ 
   // ── 404 ─────────────────────────────────────────────────────
   { path: '*', element: <Navigate to="/" replace /> },
 ])
