@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import {  z } from 'zod'
 import { motion, easeOut } from 'framer-motion'
 import { Eye, EyeOff, Loader2, LogIn, AlertCircle } from 'lucide-react'
 import { useAppDispatch } from '@/store/hooks'
 import { setCredentials } from '@/store/slices/authSlice'
-import authService from '@/services/authService'
+import authService from '@/services/authService' 
+import { getDashboardRoute } from '@/utils/format'
 import toast from 'react-hot-toast'
 
 const schema = z.object({
@@ -41,7 +42,8 @@ export default function LoginPage() {
       const result = await authService.login(data)
       dispatch(setCredentials({ user: result.user, tokens: result.tokens }))
       toast.success(`Welcome back, ${result.user.first_name}!`)
-      navigate(from, { replace: true })
+      const destination = from !== '/feed' ? from : getDashboardRoute(result.user.role)
+      navigate(destination, { replace: true })
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string; message?: string } } }
       setApiError(e?.response?.data?.detail || e?.response?.data?.message || 'Invalid email or password.')

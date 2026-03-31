@@ -4,7 +4,7 @@
 // ============================================================
 
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAppSelector } from '@/store/hooks'
 
 // Layouts
@@ -44,14 +44,8 @@ const VerifyEmailPage    = lazy(() => import('@/pages/Auth/VerifyEmailPage'))
 
 // ── Lazy pages — Dashboard (authenticated) ───────────────────
 const FeedPage           = lazy(() => import('@/pages/Feed/FeedPage'))
-const DashboardPage      = lazy(() => import('@/pages/Dashboard/DashboardPage'))
-const ProfilePage        = lazy(() => import('@/pages/Dashboard/sub/ProfilePage'))
-const SavedPage          = lazy(() => import('@/pages/Dashboard/sub/SavedPage'))
-const BookingsPage       = lazy(() => import('@/pages/Dashboard/sub/BookingsPage'))
-const MessagesPage       = lazy(() => import('@/pages/Dashboard/sub/MessagesPage'))
-const NotificationsPage  = lazy(() => import('@/pages/Dashboard/sub/NotificationsPage'))
-const VerificationPage   = lazy(() => import('@/pages/Dashboard/sub/VerificationPage'))
-const SettingsPage       = lazy(() => import('@/pages/Dashboard/sub/SettingsPage'))
+
+// ── Lazy pages — Admin ────────────────────────────────────────
 const AdminLayout        = lazy(() => import('@/components/admin/AdminLayout'))
 const AdminOverviewPage  = lazy(() => import('@/pages/Admin/AdminOverviewpage'))
 const AdminAnalyticsPage = lazy(() => import('@/pages/Admin/AdminAnalyticsPage'))
@@ -61,11 +55,20 @@ const AdminPaymentsPage  = lazy(() => import('@/pages/Admin/AdminPaymentsPage'))
 const AdminTeamPage      = lazy(() => import('@/pages/Admin/AdminTeamPage'))
 const AdminAgencyPage    = lazy(() => import('@/pages/Admin/AdminAgencyPage'))
 const AdminSettingsPage  = lazy(() => import('@/pages/Admin/AdminSettingsPage'))
+const DashboardPage      = lazy(() => import('@/pages/Dashboard/DashboardPage'))
+const ProfilePage        = lazy(() => import('@/pages/Dashboard/sub/ProfilePage'))
+const SavedPage          = lazy(() => import('@/pages/Dashboard/sub/SavedPage'))
+const BookingsPage       = lazy(() => import('@/pages/Dashboard/sub/BookingsPage'))
+const MessagesPage       = lazy(() => import('@/pages/Dashboard/sub/MessagesPage'))
+const NotificationsPage  = lazy(() => import('@/pages/Dashboard/sub/NotificationsPage'))
+const VerificationPage   = lazy(() => import('@/pages/Dashboard/sub/VerificationPage'))
+const SettingsPage       = lazy(() => import('@/pages/Dashboard/sub/SettingsPage'))
 
 // ── Protected route wrapper ───────────────────────────────────
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated)
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  const location = useLocation()
+  if (!isAuthenticated) return <Navigate to="/login" state={{ from: location.pathname }} replace />
   return <>{children}</>
 }
 
@@ -126,7 +129,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
-// ── Admin panel (/admin/*) — agency_admin only ──────────────
+
+  // ── Admin panel (/admin/*) — agency_admin only ──────────────
   {
     element: (
       <ProtectedRoute>
@@ -147,7 +151,7 @@ export const router = createBrowserRouter([
       { path: '/admin/*',          element: <Navigate to="/admin" replace /> },
     ],
   },
- 
+
   // ── 404 ─────────────────────────────────────────────────────
   { path: '*', element: <Navigate to="/" replace /> },
 ])

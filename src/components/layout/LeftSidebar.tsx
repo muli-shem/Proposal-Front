@@ -6,7 +6,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home, Building2, Clapperboard, Bookmark,
-  LayoutDashboard, MessageCircle, Bell, Settings,
+  LayoutDashboard, MessageCircle, Bell, Settings,Shield
 } from 'lucide-react'
 import { useAppSelector } from '@/store/hooks'
 import { getInitials } from '@/utils/format'
@@ -22,9 +22,11 @@ const NAV_ITEMS = [
   { to: '/dashboard/settings',      label: 'Settings',       icon: Settings },
 ]
 
+const ADMIN_ROLES = ['agency_admin', 'developer']
 export default function LeftSidebar() {
   const location = useLocation()
   const { user } = useAppSelector((s) => s.auth)
+  const isAdmin = ADMIN_ROLES.includes(user?.role ?? '')
 
   return (
     <div className="flex flex-col gap-1">
@@ -34,7 +36,7 @@ export default function LeftSidebar() {
           to="/dashboard/profile"
           className="flex items-center gap-3 px-3 py-3 rounded-xl mb-2 hover:bg-stone-100 transition-all group"
         >
-          <div className="w-10 h-10 rounded-full bg-purple-700 flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-purple-700 flex items-center justify-center text-white text-sm font-semibold overflow-hidden shrink-0">
             {user.avatar_url
               ? <img src={user.avatar_url} alt={user.full_name} className="w-full h-full object-cover" />
               : <span>{getInitials(user.full_name || user.email)}</span>
@@ -74,7 +76,20 @@ export default function LeftSidebar() {
           </Link>
         )
       })}
+   // Admin panel - only for agency admin /developer
 
+   {
+    isAdmin && (
+            <>
+          <div className="divider my-2" />
+          <Link to="/admin"
+            className={location.pathname.startsWith('/admin') ? 'nav-link-active' : 'nav-link'}>
+            <Shield size={17} />
+            <span>Admin Panel</span>
+          </Link>
+        </>
+    )
+   }
       <div className="h-px bg-stone-200 mt-4 mb-4" />
       <div className="px-3">
         <p className="text-xs text-gray-400 leading-relaxed">

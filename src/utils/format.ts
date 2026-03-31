@@ -104,3 +104,17 @@ export function formatCount(n: number): string {
   if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K`
   return String(n)
 }
+
+// ── Role-based redirect helper ────────────────────────────────
+export function getDashboardRoute(role?: string): string {
+  switch (role) {
+    case 'agency_admin':
+    case 'developer':
+      return '/admin'
+    case 'agent':
+      return '/dashboard'
+    case 'buyer':
+    default:
+      return '/feed'
+  }
+}
